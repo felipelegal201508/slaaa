@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Portal</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        body.dark {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background-color: #fff;
+            border-bottom: 1px solid #ddd;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        body.dark header {
+            background-color: #2a2a2a;
+            border-bottom-color: #444;
+        }
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+        .theme-toggle {
+            background: none;
+            border: 1px solid #999;
+            border-radius: 20px;
+            padding: 0.3rem 1rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: inherit;
+            transition: background-color 0.3s;
+        }
+        body.dark .theme-toggle {
+            border-color: #bbb;
+        }
+        .page {
+            display: none;
+            flex: 1;
+            padding: 2rem;
+        }
+        .page.active {
+            display: block;
+        }
+        #home {
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
+        }
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .game-card {
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 2rem 1rem;
+            text-align: center;
+            transition: transform 0.2s, box-shadow 0.2s, background-color 0.3s, border-color 0.3s;
+            cursor: pointer;
+        }
+        body.dark .game-card {
+            background-color: #2a2a2a;
+            border-color: #444;
+        }
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        body.dark .game-card:hover {
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        }
+        .game-card .placeholder-icon {
+            width: 60px;
+            height: 60px;
+            background-color: #ddd;
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #999;
+            transition: background-color 0.3s;
+        }
+        body.dark .game-card .placeholder-icon {
+            background-color: #444;
+            color: #aaa;
+        }
+        .game-card h3 {
+            font-weight: 400;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        .game-card p {
+            font-size: 0.85rem;
+            color: #888;
+        }
+        body.dark .game-card p {
+            color: #aaa;
+        }
+        .game-page {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .game-page h2 {
+            font-weight: 300;
+            margin-bottom: 1rem;
+        }
+        .game-page .placeholder-content {
+            border: 2px dashed #ccc;
+            border-radius: 12px;
+            padding: 4rem 2rem;
+            text-align: center;
+            color: #999;
+            margin-top: 2rem;
+        }
+        body.dark .game-page .placeholder-content {
+            border-color: #555;
+            color: #aaa;
+        }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: #666;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s;
+        }
+        body.dark .back-link {
+            color: #bbb;
+        }
+        .back-link:hover {
+            color: #000;
+        }
+        body.dark .back-link:hover {
+            color: #fff;
+        }
+        footer {
+            text-align: center;
+            padding: 1.5rem;
+            font-size: 0.8rem;
+            color: #999;
+            border-top: 1px solid #ddd;
+            transition: border-color 0.3s;
+        }
+        body.dark footer {
+            border-top-color: #444;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Game Portal</h1>
+        <button class="theme-toggle" id="themeToggle">Dark Mode</button>
+    </header>
+
+    <main>
+        <!-- Home page -->
+        <section id="home" class="page active">
+            <h2>Available Games</h2>
+            <div class="game-grid" id="gameGrid">
+                <!-- 10 empty slots generated by JS -->
+            </div>
+        </section>
+
+        <!-- Individual game pages (placeholder) -->
+        <div id="gamePages" style="display: none;">
+            <!-- Generated dynamically -->
+        </div>
+    </main>
+
+    <footer>
+        &copy; 2025 Game Portal. All rights reserved.
+    </footer>
+
+    <script>
+        (function() {
+            // Theme toggle
+            const themeToggle = document.getElementById('themeToggle');
+            const body = document.body;
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                body.classList.add('dark');
+                themeToggle.textContent = 'Light Mode';
+            }
+            themeToggle.addEventListener('click', function() {
+                body.classList.toggle('dark');
+                const isDark = body.classList.contains('dark');
+                themeToggle.textContent = isDark ? 'Light Mode' : 'Dark Mode';
+                localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            });
+
+            // Generate 10 game cards and pages
+            const gameGrid = document.getElementById('gameGrid');
+            const gamePagesContainer = document.getElementById('gamePages');
+            const numGames = 10;
+            for (let i = 1; i <= numGames; i++) {
+                // Card
+                const card = document.createElement('a');
+                card.href = `#game${i}`;
+                card.className = 'game-card';
+                card.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    showGamePage(i);
+                });
+                card.innerHTML = `
+                    <div class="placeholder-icon">
+                        <span>${i}</span>
+                    </div>
+                    <h3>Game ${i}</h3>
+                    <p>Empty slot</p>
+                `;
+                gameGrid.appendChild(card);
+
+                // Page
+                const page = document.createElement('section');
+                page.id = `game${i}`;
+                page.className = 'page';
+                page.innerHTML = `
+                    <div class="game-page">
+                        <a href="#home" class="back-link" onclick="showHome(event)">&larr; Back to Games</a>
+                        <h2>Game ${i}</h2>
+                        <div class="placeholder-content">
+                            <p>This game page is empty for now.<br>Content will be added later.</p>
+                        </div>
+                    </div>
+                `;
+                gamePagesContainer.appendChild(page);
+            }
+
+            // Navigation functions
+            window.showGamePage = function(index) {
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById(`game${index}`).classList.add('active');
+                window.location.hash = `#game${index}`;
+            };
+
+            window.showHome = function(e) {
+                if (e) e.preventDefault();
+                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+                document.getElementById('home').classList.add('active');
+                window.location.hash = '#home';
+            };
+
+            // Handle hash on load
+            function handleHash() {
+                const hash = window.location.hash.slice(1);
+                if (hash && hash.startsWith('game') && parseInt(hash.slice(4))) {
+                    const gameNum = parseInt(hash.slice(4));
+                    if (gameNum >= 1 && gameNum <= numGames) {
+                        showGamePage(gameNum);
+                    }
+                } else {
+                    showHome();
+                }
+            }
+
+            window.addEventListener('hashchange', handleHash);
+            handleHash();
+        })();
+    </script>
+</body>
+</html>
